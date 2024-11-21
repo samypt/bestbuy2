@@ -148,3 +148,40 @@ class Product:
             print(f"Insufficient quantity of {self.name} in stock.\n")
 
 
+
+
+class NonStockedProduct(Product):
+
+    def __init__(self, name, price):
+        super().__init__(name, price, quantity=0)
+
+
+    def show(self) -> str:
+        """
+         Returns a string representation of the product.
+
+         Returns:
+             str: A string representing the product, including its name, price, and quantity.
+         """
+        return f'{self.name}, Price: {self.price}'
+
+
+
+
+class LimitedProduct(Product):
+
+    def __init__(self, name, price, quantity, maximum):
+        super().__init__(name, price, quantity)
+        if maximum <= 0:
+            raise ValueError("Maximum cannot be negative.")
+        self.maximum = int(maximum)  # Store maximum as an int
+
+
+    def show(self) -> str:
+        """
+         Returns a string representation of the product.
+
+         Returns:
+             str: A string representing the product, including its name, price, and quantity.
+         """
+        return f'{self.name}, Price: {self.price}, Quantity: {self.quantity}, Maximum: {self.maximum}'
