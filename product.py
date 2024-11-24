@@ -27,14 +27,34 @@ class Product:
 
         # Setting instance variables
         self.name = str(name) # Store name as a str
-        self.price = float(price) # Store price as a float
+        self._price = float(price) # Store price as a float
         self.quantity = float(quantity) # Store quantity as an int
         self.active = True  # Default attribute
         self._promotions = []  # Initialize promotions as an empty list
 
 
-    def __str__(self):
-        return f"{self.name}, Price: ${self.price}, Quantity: {self.quantity}"
+    @property
+    def price(self):
+        """
+        Getter method for the price.
+        """
+        return self._price  # Access the private attribute
+
+
+    @price.setter
+    def price(self, new_price):
+        """
+        Setter method for the price. Ensures the price is non-negative.
+
+        Args:
+            new_price (float): The new price to set.
+
+        Raises:
+            ValueError: If the new price is less than 0.
+        """
+        if new_price < 0:
+            raise ValueError("Price cannot be lower than 0")
+        self._price = new_price  # Modify the private attribute
 
 
     @property
@@ -125,7 +145,13 @@ class Product:
             print(f"Product '{self.name}' is already active.\n")
 
 
-    def show(self) -> str:
+    def __gt__(self, other):
+        print(self._price, 'first')
+        # print(other.price(), 'second')
+        return self._price > other.price
+
+
+    def __str__(self) -> str:
         """
         Returns a string representation of the product, including its name, price, quantity, and promotions.
 
@@ -134,7 +160,7 @@ class Product:
         """
         promotion_str = "No Promotion" if not self._promotions else ', '.join(str(promo) for promo in self._promotions)
 
-        return f'{self.name}, Price: ${self.price}, Quantity: {self.quantity}, Promotion: {promotion_str}'
+        return f'{self.name}, Price: ${self._price}, Quantity: {self.quantity}, Promotion: {promotion_str}'
 
 
     def buy(self, quantity) -> float:
@@ -163,11 +189,11 @@ class Product:
         if self.quantity >= quantity:
             self.quantity -= quantity
             if not self._promotions:
-                total_price = self.price * quantity
+                total_price = self._price * quantity
                 print(f"Successfully purchased {quantity} of {self.name}.")
                 print(f"Remaining quantity: {self.quantity}")
             else: # add all the promotions
-                total_price = self.price * quantity
+                total_price = self._price * quantity
                 total_discount = 0
                 for promotion in self._promotions:
                     discounted_price = promotion.apply_promotion(self, quantity)
@@ -205,7 +231,9 @@ class NonStockedProduct(Product):
         """
         promotion_str = "No Promotion" if not self._promotions else ', '.join(str(promo) for promo in self._promotions)
 
-        return f'{self.name}, Price: ${self.price}, Promotion: {promotion_str}'
+        return f'{self.name}, Price: ${self._price}, Promotion: {promotion_str}'
+
+
 
 
 class LimitedProduct(Product):
@@ -226,4 +254,4 @@ class LimitedProduct(Product):
         """
         promotion_str = "No Promotion" if not self._promotions else ', '.join(str(promo) for promo in self._promotions)
 
-        return f'{self.name}, Price: ${self.price}, Quantity: {self.quantity}, Maximum: {self.maximum}, Promotion: {promotion_str}'
+        return f'{self.name}, Price: ${self._price}, Quantity: {self.quantity}, Maximum: {self.maximum}, Promotion: {promotion_str}'

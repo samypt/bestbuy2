@@ -42,6 +42,8 @@ class Promotion(ABC):
         return f"{self.name}"
 
 
+
+
 class SecondHalfPrice(Promotion):
     """
     Promotion that applies a 'Second Half Price' discount, where every second item in a pair is half price.
@@ -71,6 +73,8 @@ class SecondHalfPrice(Promotion):
         return total_cost
 
 
+
+
 class ThirdOneFree(Promotion):
     """
     Promotion where every third item is free.
@@ -94,6 +98,8 @@ class ThirdOneFree(Promotion):
         total_cost = (quantity - free_items) * product.price
 
         return total_cost
+
+
 
 
 class PercentDiscount(Promotion):

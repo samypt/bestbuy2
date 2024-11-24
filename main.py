@@ -38,7 +38,7 @@ def list_all_products(store_list):
     """
     products = store_list.get_all_products()
     for  product in products:
-        print(product.show())
+        print(product)
 
 
 def show_total_amount(store):

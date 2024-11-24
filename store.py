@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 
 class Store:
-    products = []
+
 
     def __init__(self, products):
         """
@@ -22,6 +22,7 @@ class Store:
             the product(s) being added. If a list is passed, the method verifies
             that all elements are instances of the `Product` class.
         """
+        self.products = []
         self.add_product(products)
 
 
@@ -120,3 +121,51 @@ class Store:
                 product, quantity = item
                 total_ordering += product.buy(quantity)
         return total_ordering
+
+
+    def __contains__(self, item):
+        """
+        Check if an item exists in the collection of products.
+
+        This method is called when using the 'in' keyword to test membership.
+
+        Args:
+            item: The item to check for in the collection.
+
+        Returns:
+            bool: True if the item is in the collection of products, False otherwise.
+        """
+        return item in self.products
+
+
+    def __add__(self, other):
+        """
+        Combine the products from two stores into a new store.
+
+        Args:
+            other (Store): Another store whose products will be added.
+
+        Returns:
+            Store: A new store containing products from both stores.
+        """
+        # Combine the products from both stores
+        combined_products = self.products + other.products
+
+        # Create a new store with the combined products
+        return Store(combined_products)
+
+
+    def __str__(self):
+        """
+        Return a string representation of the store's products.
+
+        If the store has products, their names are joined into a comma-separated string.
+        If the store has no products, "None" is returned.
+
+        Returns:
+            str: A comma-separated string of product names if products exist,
+                 otherwise "None".
+        """
+        products_str = None if not self.products else ', '.join((str(product.name) for product in self.products))
+        return products_str
+
