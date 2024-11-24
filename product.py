@@ -1,3 +1,6 @@
+from  promotion import  Promotion
+
+
 class Product:
 
     def __init__(self, name, price, quantity):
@@ -25,12 +28,33 @@ class Product:
         # Setting instance variables
         self.name = str(name) # Store name as a str
         self.price = float(price) # Store price as a float
-        self.quantity = int(quantity) # Store quantity as an int
+        self.quantity = float(quantity) # Store quantity as an int
         self.active = True  # Default attribute
+        self._promotions = []  # Initialize promotions as an empty list
 
 
     def __str__(self):
         return f"{self.name}, Price: ${self.price}, Quantity: {self.quantity}"
+
+
+    @property
+    def promotion(self):
+        # Getter method for promotion
+        return self._promotions
+
+
+    @promotion.setter
+    def promotion(self, promotion):
+        # Setter method for promotion
+        if not isinstance(promotion, Promotion):
+            raise ValueError("Promotion must be an instance of a Promotion class.")
+        self._promotions.append(promotion)
+
+
+    def set_promotion(self, promotion):
+        if not isinstance(promotion, Promotion):
+            raise ValueError("Promotion must be an instance of a Promotion class.")
+        self._promotions.append(promotion)
 
 
     def get_quantity(self) -> float:
@@ -103,12 +127,14 @@ class Product:
 
     def show(self) -> str:
         """
-         Returns a string representation of the product.
+        Returns a string representation of the product, including its name, price, quantity, and promotions.
 
-         Returns:
-             str: A string representing the product, including its name, price, and quantity.
-         """
-        return f'{self.name}, Price: {self.price}, Quantity: {self.quantity}'
+        Returns:
+            str: A string representing the product.
+        """
+        promotion_str = "No Promotion" if not self._promotions else ', '.join(str(promo) for promo in self._promotions)
+
+        return f'{self.name}, Price: ${self.price}, Quantity: {self.quantity}, Promotion: {promotion_str}'
 
 
     def buy(self, quantity) -> float:
@@ -136,9 +162,23 @@ class Product:
 
         if self.quantity >= quantity:
             self.quantity -= quantity
-            total_price = self.price * quantity
-            print(f"Successfully purchased {quantity} of {self.name}.")
-            print(f"Remaining quantity: {self.quantity}")
+            if not self._promotions:
+                total_price = self.price * quantity
+                print(f"Successfully purchased {quantity} of {self.name}.")
+                print(f"Remaining quantity: {self.quantity}")
+            else: # add all the promotions
+                total_price = self.price * quantity
+                total_discount = 0
+                for promotion in self._promotions:
+                    discounted_price = promotion.apply_promotion(self, quantity)
+                    discount = total_price - discounted_price
+                    total_discount += discount
+                    total_price = discounted_price
+                promotion_str = "No Promotion" if not self._promotions else ', '.join(
+                    str(promo) for promo in self._promotions)
+                print(f"Promotion: {promotion_str} applied")
+                print(f"Successfully purchased {quantity} of {self.name}.")
+                print(f"Remaining quantity: {self.quantity}")
             # Deactivate the product if quantity reaches 0
             if self.quantity == 0:
                 self.deactivate()
@@ -153,19 +193,19 @@ class Product:
 class NonStockedProduct(Product):
 
     def __init__(self, name, price):
-        super().__init__(name, price, quantity=0)
+        super().__init__(name, price, quantity=float('inf'))
 
 
     def show(self) -> str:
         """
-         Returns a string representation of the product.
+        Returns a string representation of the product, including its name, price, and promotions.
 
-         Returns:
-             str: A string representing the product, including its name, price, and quantity.
-         """
-        return f'{self.name}, Price: {self.price}'
+        Returns:
+            str: A string representing the product, including promotions if applicable.
+        """
+        promotion_str = "No Promotion" if not self._promotions else ', '.join(str(promo) for promo in self._promotions)
 
-
+        return f'{self.name}, Price: ${self.price}, Promotion: {promotion_str}'
 
 
 class LimitedProduct(Product):
@@ -179,9 +219,11 @@ class LimitedProduct(Product):
 
     def show(self) -> str:
         """
-         Returns a string representation of the product.
+        Returns a string representation of the product, including its name, price, quantity, maximum, and promotions.
 
-         Returns:
-             str: A string representing the product, including its name, price, and quantity.
-         """
-        return f'{self.name}, Price: {self.price}, Quantity: {self.quantity}, Maximum: {self.maximum}'
+        Returns:
+            str: A string representing the product, including promotions if applicable.
+        """
+        promotion_str = "No Promotion" if not self._promotions else ', '.join(str(promo) for promo in self._promotions)
+
+        return f'{self.name}, Price: ${self.price}, Quantity: {self.quantity}, Maximum: {self.maximum}, Promotion: {promotion_str}'

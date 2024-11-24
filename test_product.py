@@ -41,11 +41,3 @@ def test_buy_modifies_quantity(product):
 def test_buy_too_much(product):
     with pytest.raises(Exception, match=f"Insufficient stock. Only {product.quantity} units are available.") :
         product.buy((product.quantity + 1))
-
-
-
-# product = Product("MacBook", price=1450, quantity=100)
-#
-# print(product)
-#
-# print(product.is_active())

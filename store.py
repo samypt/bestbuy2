@@ -1,6 +1,7 @@
 from product import Product
 from typing import List, Tuple
 
+
 class Store:
     products = []
 
@@ -80,7 +81,7 @@ class Store:
         Returns:
             float: The total quantity of all products in the store.
         """
-        return sum(getattr(product, 'quantity', 0) for product in self.products)
+        return sum(getattr(product, 'quantity', 0) for product in self.products if product.quantity != float('inf'))
 
 
     def get_all_products(self) -> List[Product]:
