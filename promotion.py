@@ -18,6 +18,7 @@ class Promotion(ABC):
         """
         self.name = name
 
+
     @abstractmethod
     def apply_promotion(self, product, quantity):
         """
@@ -31,6 +32,7 @@ class Promotion(ABC):
             float: The total price after the promotion is applied.
         """
         pass
+
 
     def __str__(self):
         """
@@ -125,6 +127,7 @@ class PercentDiscount(Promotion):
         if percent < 0 or percent > 100:
             raise ValueError("Discount percentage must be between 0 and 100.")
         self.percent = percent
+
 
     def apply_promotion(self, product, quantity):
         """
