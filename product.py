@@ -1,3 +1,5 @@
+from typing import Optional
+
 from  promotion import  Promotion
 
 
@@ -163,7 +165,7 @@ class Product:
         return f'{self.name}, Price: ${self._price}, Quantity: {self.quantity}, Promotion: {promotion_str}'
 
 
-    def buy(self, quantity) -> float:
+    def buy(self, quantity) -> Optional[float]:
         """
         Buys a given quantity of the product.
         Updates the quantity of the product and returns the total price of the purchase.
@@ -254,4 +256,58 @@ class LimitedProduct(Product):
         """
         promotion_str = "No Promotion" if not self._promotions else ', '.join(str(promo) for promo in self._promotions)
 
-        return f'{self.name}, Price: ${self._price}, Quantity: {self.quantity}, Maximum: {self.maximum}, Promotion: {promotion_str}'
+        return (f'{self.name}, Price: ${self._price}, Quantity: {self.quantity}, Maximum: {self.maximum},'
+                f' Promotion: {promotion_str}')
+
+    def buy(self, quantity) -> Optional[float]:
+        """
+        Buys a given quantity of the product.
+        Updates the quantity of the product and returns the total price of the purchase.
+
+        Args:
+            quantity (float): The quantity to buy.
+
+        Returns:
+            float: The total price of the purchase.
+
+        Raises:
+            Exception: If the quantity is greater than the available stock or if the product is inactive.
+        """
+        if not self.active:
+            raise Exception(f"The product '{self.name}' is not available for purchase because it is inactive.")
+
+        if quantity <= 0:
+            raise Exception("Quantity must be greater than zero.")
+
+        if quantity > self.maximum:
+            raise Exception(f"The maximum amount you can buy is {self.maximum}.")
+
+        if quantity > self.quantity:
+            raise Exception(f"Insufficient stock. Only {self.quantity} units are available.")
+
+        if self.quantity >= quantity:
+            self.quantity -= quantity
+            if not self._promotions:
+                total_price = self._price * quantity
+                print(f"Successfully purchased {quantity} of {self.name}.")
+                print(f"Remaining quantity: {self.quantity}")
+            else: # add all the promotions
+                total_price = self._price * quantity
+                total_discount = 0
+                for promotion in self._promotions:
+                    discounted_price = promotion.apply_promotion(self, quantity)
+                    discount = total_price - discounted_price
+                    total_discount += discount
+                    total_price = discounted_price
+                promotion_str = "No Promotion" if not self._promotions else ', '.join(
+                    str(promo) for promo in self._promotions)
+                print(f"Promotion: {promotion_str} applied")
+                print(f"Successfully purchased {quantity} of {self.name}.")
+                print(f"Remaining quantity: {self.quantity}")
+            # Deactivate the product if quantity reaches 0
+            if self.quantity == 0:
+                self.deactivate()
+            print(f"Total price: ${float(total_price)}\n")
+            return float(total_price)
+        else:
+            print(f"Insufficient quantity of {self.name} in stock.\n")

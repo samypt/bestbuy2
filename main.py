@@ -37,8 +37,8 @@ def list_all_products(store_list):
         store_list (Store): An instance of the Store class that contains a list of products.
     """
     products = store_list.get_all_products()
-    for  product in products:
-        print(product)
+    for  number, product in enumerate(products):
+        print(f"{number + 1}. {product}")
 
 
 def show_total_amount(store):
